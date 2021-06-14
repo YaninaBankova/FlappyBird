@@ -6,7 +6,7 @@ public class FlappyBirdApp {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setSize(400, 400);
+		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
 		frame.add(new FlappyBirdControl());
 		frame.setTitle("Flappy Bird");

@@ -3,13 +3,15 @@ package edu.smg;
 public class Pipe implements Comparable<Pipe>{
 	public int top;
 	public int bottom;
+	public int spaceBetweenPipes;
 	public int x;
 	public static int pipeWidth = 20;
 	
 	public Pipe(int width, int height) {
 		x = width;
-		bottom = (int)(height * Math.random()/2);
-		top = (int)(height * Math.random()/2);
+		spaceBetweenPipes = (int)(height / 5 + Math.random() * height / 5);
+		top = (int)(height * Math.random()/3 + height / 10);
+		bottom = height - (top + spaceBetweenPipes);
 	}
 	
 	public int compareTo(Pipe arg0) {

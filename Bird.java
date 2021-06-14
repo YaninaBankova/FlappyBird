@@ -14,9 +14,6 @@ public class Bird {
 	public Bird(int x, int y) {
 		this.x = x;
 		this.y = y;
-		
-		width = 50;
-		height = 50;
 	}
 	
 }
