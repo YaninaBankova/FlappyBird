@@ -9,6 +9,7 @@ public class Pipe implements Comparable<Pipe>{
 	
 	public Pipe(int width, int height) {
 		x = width;
+		//choosing a random size for the top and bottom pipe
 		spaceBetweenPipes = (int)(height / 5 + Math.random() * height / 5);
 		top = (int)(height * Math.random()/3 + height / 10);
 		bottom = height - (top + spaceBetweenPipes);

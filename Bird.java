@@ -2,13 +2,14 @@ package edu.smg;
 
 
 public class Bird {
-	int x = 0;
-	int y = 0;
-	int width = 0;
-	int height = 0;
+	int x;
+	int y;
+	int width;
+	int height;
 	
 	public Bird() {
-		
+		x = 30;
+		y = 0;
 	}
 	
 	public Bird(int x, int y) {
