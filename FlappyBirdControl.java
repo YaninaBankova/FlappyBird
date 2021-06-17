@@ -1,4 +1,4 @@
-package edu.smg;
+package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,9 +12,9 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class FlappyBirdControl extends JPanel{
 	private FlappyBirdPanel flappyBirdPanel = new FlappyBirdPanel();
-	private JLabel lblName = new JLabel();
 	private JPanel bottomPanel = new JPanel();
-	
+
+	static JLabel lblName = new JLabel();
 	static JLabel highestScore = new JLabel("Highest score: 0");
 	static JButton btnPlayAgain = new JButton("Play again");
 	static JLabel score = new JLabel("Score: 0");
@@ -52,7 +52,7 @@ public class FlappyBirdControl extends JPanel{
 		}
 	}
 	
-	public boolean validName(String name) {
+	public boolean validName(String name) throws StringIndexOutOfBoundsException{
 		char firstChar = name.charAt(0);
 		//if the first char is a letter the name is valid
 		if((firstChar >= 65 && firstChar <= 90) || (firstChar >= 97 && firstChar <= 122))

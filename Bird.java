@@ -1,4 +1,4 @@
-package edu.smg;
+package main;
 
 
 public class Bird {

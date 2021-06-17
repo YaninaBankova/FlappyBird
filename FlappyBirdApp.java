@@ -1,4 +1,4 @@
-package edu.smg;
+package main;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -48,11 +48,14 @@ public class FlappyBirdApp {
 		
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String name = nameField.getText();
 				try {
+					String name = nameField.getText();
 					frame.add(new FlappyBirdControl(name));
 					startingPanel.setVisible(false);
 				} catch (InvalidNameException ex) {
+					invalidName.setVisible(true);
+					nameField.setText("");
+				} catch (StringIndexOutOfBoundsException ex) {
 					invalidName.setVisible(true);
 					nameField.setText("");
 				}

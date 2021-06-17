@@ -1,4 +1,4 @@
-package edu.smg;
+package main;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -9,11 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
 import java.util.PriorityQueue;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import resources.ResourceLoader;
 
 
 @SuppressWarnings("serial")
@@ -39,16 +44,19 @@ public class FlappyBirdPanel extends JPanel{
 	Color lightGreen = new Color(0, 255, 0);
 	Color brown = new Color(255, 224, 122);
 	
+	public boolean writeScore = false;
 	public boolean gameEnded = false;
 	public double velocity = 0;
 	public int speed = getWidth() / 180;
-	public double gravity = 0.9;
+	public double gravity = 0.8;
 	public double lift = 17;
 	public int distanceBetweenPipes = getWidth() / 4;
 	public int score = 0;
 	public int highestScore = 0;
-	ImageIcon birdImage = new ImageIcon("C:\\Users\\Yaniiiiiii\\11e\\Project_FlappyBird\\src\\edu\\smg\\flappy_bird.png");
-	Image birdCopy = birdImage.getImage();
+	Image birdImage = ResourceLoader.loadImage("flappy_bird.png");
+	Image backgroundImage = ResourceLoader.loadImage("background.png");
+	
+	File scoresList = new File("highest_scores.txt");
 	
 	public FlappyBirdPanel() {
 		timer.start();
@@ -109,19 +117,20 @@ public class FlappyBirdPanel extends JPanel{
 		}
 		
 		setBackground(blue);
+		g.drawImage(backgroundImage, 0, height * 2 / 5, width, height / 2, this); //background
 		
 		for(Pipe pipe: pipes) {
 			//fill the pipes
 			g.setColor(lightGreen);
 			g.fillRect(pipe.x, 0, Pipe.pipeWidth, pipe.top - height / 20); // top pipe
-			g.fillRect(pipe.x ,height * 21 / 20 - pipe.bottom, Pipe.pipeWidth, pipe.bottom);
-			g.fillRect(pipe.x - Pipe.pipeWidth / 6, pipe.top - height / 20, Pipe.pipeWidth * 8 / 6, height / 20); //bottom pipe
+			g.fillRect(pipe.x - Pipe.pipeWidth / 6, pipe.top - height / 20, Pipe.pipeWidth * 8 / 6, height / 20);
+			g.fillRect(pipe.x ,height * 21 / 20 - pipe.bottom, Pipe.pipeWidth, pipe.bottom); //bottom pipe
 			g.fillRect(pipe.x - Pipe.pipeWidth / 6, height - pipe.bottom, Pipe.pipeWidth * 8 / 6, height / 20);
 			//draw the outlines of the pipes
 			g.setColor(Color.black);
 			g2d.drawRect(pipe.x, 0, Pipe.pipeWidth, pipe.top - height / 20); //top pipe
-			g2d.drawRect(pipe.x ,height * 21 / 20 - pipe.bottom, Pipe.pipeWidth, pipe.bottom);
-			g2d.drawRect(pipe.x - Pipe.pipeWidth / 6, pipe.top - height / 20, Pipe.pipeWidth * 8 / 6, height / 20); //bottom pipe
+			g2d.drawRect(pipe.x - Pipe.pipeWidth / 6, pipe.top - height / 20, Pipe.pipeWidth * 8 / 6, height / 20);
+			g2d.drawRect(pipe.x ,height * 21 / 20 - pipe.bottom, Pipe.pipeWidth, pipe.bottom); //bottom pipe
 			g2d.drawRect(pipe.x - Pipe.pipeWidth / 6, height - pipe.bottom, Pipe.pipeWidth * 8 / 6, height / 20);
 		}
 		
@@ -133,10 +142,7 @@ public class FlappyBirdPanel extends JPanel{
 		g.setColor(Color.black);
 		g2d.drawLine(0, height * 9 / 10, width, height * 9 / 10); //outline of the ground
 		
-		//resize the picture of the bird depending of the size of the window and then draw it
-		Image newimg = birdCopy.getScaledInstance(bird.width, bird.height,  java.awt.Image.SCALE_FAST);
-		birdImage = new ImageIcon(newimg);
-		birdImage.paintIcon(this, g, bird.x, bird.y);
+		g.drawImage(birdImage, bird.x, bird.y, bird.width, bird.height, this); //bird
 		
 		update();
 		
@@ -149,6 +155,11 @@ public class FlappyBirdPanel extends JPanel{
 			FlappyBirdControl.highestScore.setText("Highest score: " + highestScore);
 		}
 		
+		if(highestScore >= 10 && writeScore) {
+			writeScore = false;
+			writeInFile();
+		}
+		
 		//if the player clicked the button "play again", resume the game
 		if(!gameEnded && speed == 0) {
 			speed = getWidth() / 180;
@@ -157,6 +168,7 @@ public class FlappyBirdPanel extends JPanel{
 			bird.y = 20;
 			pipes.clear();
 			score = 0;
+			writeScore = false;
 			FlappyBirdControl.score.setText("Score: " + score);
 		}
 		
@@ -175,7 +187,7 @@ public class FlappyBirdPanel extends JPanel{
 		}
 		
 		//if the most left pipe is left of the bird and cannot be seen anymore, delete the pipe
-		if(pipes.peek() != null && pipes.peek().x < - Pipe.pipeWidth) {
+		if(pipes.peek() != null && pipes.peek().x < - Pipe.pipeWidth * 8 / 6) {
 			pipes.poll();
 			score++;
 			FlappyBirdControl.score.setText("Score: " + score);
@@ -191,6 +203,9 @@ public class FlappyBirdPanel extends JPanel{
 			FlappyBirdControl.btnPlayAgain.setVisible(true);
 			velocity = 0;
 			bird.y = getHeight() * 11 / 12 - bird.height;
+			if(!gameEnded){
+				writeScore = true;
+			}
 			gameEnded = true;
 			
 		}
@@ -208,5 +223,21 @@ public class FlappyBirdPanel extends JPanel{
 		
 	}
 	
+	public void writeInFile() {
+		try {
+			Date date = new Date();
+			FileWriter myWriter = new FileWriter("highest_scores.txt", true);
+			myWriter.write(FlappyBirdControl.lblName.getText() + "\n");
+			myWriter.write("Score: " + highestScore + "\n");
+			myWriter.write("Date: " + date + "\n" + "\n");
+			myWriter.close();
+		} catch (IOException e) {
+			try {
+				scoresList.createNewFile();
+			} catch (IOException e1) {
+				
+			}
+		}
+	}
 
 }
